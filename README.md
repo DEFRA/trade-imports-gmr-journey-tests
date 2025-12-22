@@ -1,96 +1,77 @@
-trade-imports-gmr-journey-tests
+# trade-imports-gmr-journey-tests
 
-The template to create a service that runs WDIO tests against an environment.
+Journey tests to cover [trade-imports-gmr-finder](https://github.com/DEFRA/trade-imports-gmr-finder) and [trade-imports-gmr-processor](https://github.com/DEFRA/trade-imports-gmr-processor) services.
 
-- [Local](#local)
-  - [Requirements](#requirements)
-    - [Node.js](#nodejs)
-  - [Setup](#setup)
-  - [Running local tests](#running-local-tests)
-  - [Debugging local tests](#debugging-local-tests)
-- [Production](#production)
-  - [Debugging tests](#debugging-tests)
-- [Licence](#licence)
-  - [About the licence](#about-the-licence)
+## Prerequisites
 
-## Local Development
+### Dependencies
 
-### Requirements
+Install the following:
+- [.NET 10 (SDK)](https://dotnet.microsoft.com/)
+- [Docker](https://docs.docker.com/engine/)
+- [Docker Compose](https://docs.docker.com/compose/)
 
-#### Node.js
+### Services
 
-Please install [Node.js](http://nodejs.org/) `>= v20` and [npm](https://nodejs.org/) `>= v9`. You will find it
-easier to use the Node Version Manager [nvm](https://github.com/creationix/nvm)
+Create `.env` file in the root of the project and provide necessary secrets (copy `.env.example`).
 
-To use the correct version of Node.js for this application, via nvm:
+Start as follows:
 
 ```bash
-nvm use
+docker compose up -d
 ```
 
-### Setup
-
-Install application dependencies:
+Stop as follows:
 
 ```bash
-npm install
+docker compose down
 ```
 
-### Running local tests
+## Tests
 
-Start application you are testing on the url specified in `baseUrl` [wdio.local.conf.js](wdio.local.conf.js)
+### Local
+
+Build as follows:
 
 ```bash
-npm run test:local
+dotnet build
 ```
 
-### Debugging local tests
+Run as follows:
 
 ```bash
-npm run test:local:debug
+dotnet test
 ```
 
-## Production
+### Docker
 
-### Running the tests
+Build as follows:
 
-Tests are run from the CDP-Portal under the Test Suites section. Before any changes can be run, a new docker image must be built, this will happen automatically when a pull request is merged into the `main` branch.
-You can check the progress of the build under the actions section of this repository. Builds typically take around 1-2 minutes.
+```bash
+docker build . -t trade-imports-gmr-journey-tests
+```
 
-The results of the test run are made available in the portal.
+Run as follows:
 
-## Requirements of CDP Environment Tests
+```bash
+docker run -it --rm trade-imports-gmr-journey-tests
+```
 
-1. Your service builds as a docker container using the `.github/workflows/publish.yml`
-   The workflow tags the docker images allowing the CDP Portal to identify how the container should be run on the platform.
-   It also ensures its published to the correct docker repository.
+## Linting and formatting
 
-2. The Dockerfile's entrypoint script should return exit code of 0 if the test suite passes or 1/>0 if it fails
+[CSharpier](https://csharpier.com/) is used for linting and formatting.
 
-3. Test reports should be published to S3 using the script in `./bin/publish-tests.sh`
+Install .NET local tools as follows:
 
-## Running on GitHub
+```bash
+dotnet tool restore
+```
 
-Alternatively you can run the test suite as a GitHub workflow.
-Test runs on GitHub are not able to connect to the CDP Test environments. Instead, they run the tests agains a version of the services running in docker.
-A docker compose `compose.yml` is included as a starting point, which includes the databases (mongodb, redis) and infrastructure (localstack) pre-setup.
+Format all project files as follows:
 
-Steps:
-
-1. Edit the compose.yml to include your services.
-2. Modify the scripts in docker/scripts to pre-populate the database, if required and create any localstack resources.
-3. Test the setup locally with `docker compose up` and `npm run test:github`
-4. Set up the workflow trigger in `.github/workflows/journey-tests`.
-
-By default, the provided workflow will run when triggered manually from GitHub or when triggered by another workflow.
-
-If you want to use the repository exclusively for running docker composed based test suites consider displaying the publish.yml workflow.
-
-## BrowserStack
-
-Two wdio configuration files are provided to help run the tests using BrowserStack in both a GitHub workflow (`wdio.github.browserstack.conf.js`) and from the CDP Portal (`wdio.browserstack.conf.js`).
-They can be run from npm using the `npm run test:browserstack` (for running via portal) and `npm run test:github:browserstack` (from GitHib runner).
-See the CDP Documentation for more details.
+```bash
+dotnet csharpier format .
+```
 
 ## Licence
 

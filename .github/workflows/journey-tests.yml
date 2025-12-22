@@ -9,7 +9,19 @@ on:
   workflow_call:
 jobs:
   build:
-    name: Run Journey Tests
+    name: Run journey tests
     runs-on: ubuntu-latest
     steps:
-      - uses: DEFRA/cdp-node-journey-test-suite-template/run-journey-tests@main
+      - name: Check out code
+        uses: actions/checkout@v5
+
+      - name: Run the tests
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: |
+            10.0
+        env:
+          GVMS_API_CLIENT_ID: ${{ secrets.GVMS_API_CLIENT_ID }}
+          GVMS_API_CLIENT_SECRET: ${{ secrets.GVMS_API_CLIENT_SECRET }}
+      - run: dotnet restore
+      - run: dotnet test
