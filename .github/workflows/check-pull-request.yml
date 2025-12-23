@@ -12,25 +12,24 @@ on:
       - ready_for_review
 
 jobs:
-  cdp-workflows:
+  pr-validator:
     name: Run Pull Request Checks
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Test code and Create Test Coverage Reports
-        uses: actions/setup-node@v4
+      - name: Check linting and formatting
+        uses: actions/setup-dotnet@v5
         with:
-          node-version-file: .nvmrc
-          cache: npm
-      - run: npm ci
-      - run: npm run format:check
-      - run: npm run lint
+          dotnet-version: |
+            10.0
+      - run: dotnet tool restore
+      - run: dotnet csharpier check .
 
-# Uncomment this to run the tests in your test suite
-#  tests:
-#    name: Run Journey Tests
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: DEFRA/cdp-node-journey-test-suite-template/run-journey-tests@main
+  sonarcloud-scan:
+    name: CDP SonarCloud Scan
+    uses: ./.github/workflows/sonarcloud.yml
+    needs: pr-validator
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

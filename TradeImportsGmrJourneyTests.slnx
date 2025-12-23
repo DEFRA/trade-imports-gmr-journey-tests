@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/tests/">
+    <Project Path="tests/TradeImportsGmr.JourneyTests/TradeImportsGmr.JourneyTests.csproj" />
+    <Project Path="tests/TestFixtures/TestFixtures.csproj" />
+  </Folder>
+  <Folder Name="/Solution items/">
+    <File Path="README.md" />
+  </Folder>
+</Solution>

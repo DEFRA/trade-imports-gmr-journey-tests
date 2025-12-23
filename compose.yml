@@ -1,45 +1,6 @@
-################################################################################
-# Docker Compose file for starting up the service for testing in GitHub workflow
-# This template provides comparable infrastructure to the real environment.
-#   - mongodb
-#   - redis
-#   - localstack (s3, sqs, sns)
-#
-# Both mongo and localstack have init scripts included for setting up resources
-# on startup. These scripts are in docker/scripts.
-#
-# It also includes a selenium-chrome container for running the browser headless.
-#
-# The services being tested can either be started up here using the latest
-# builds from dockerhub.
-# In the example each service has a .env config file in docker/config/
-# Services can reference each other by their container names.
-# e.g. http://cdp-example-node-backend:3001/
-#
-################################################################################
 services:
-
-################################################################################
-# Headless browser, used by the test suite to actually run the tests against the
-# containers.
-  selenium-chrome:
-    image: selenium/standalone-chrome:123.0
-    ports:
-      - 4444:4444
-
-################################################################################
-  mongodb:
-    image: mongo:6
-    volumes:
-      - ./docker/scripts/mongodb:/docker-entrypoint-initdb.d
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.hello().ok"]
-      interval: 5s
-      start_period: 5s
-      retries: 3
-################################################################################
   localstack:
-    image: localstack/localstack:3.2.0
+    image: localstack/localstack:4.11.1
     environment:
       - LOCALSTACK_HOST=127.0.0.1
       - SERVICES=s3,sqs,sns,dynamodb
@@ -49,60 +10,53 @@ services:
     volumes:
       - ./docker/scripts/localstack:/etc/localstack/init/ready.d
     healthcheck:
-      test: ["CMD", "curl", "localhost:4566"]
+      test: ["CMD", "test", "-f", "/tmp/READY"]
       interval: 5s
       start_period: 5s
       retries: 3
 
-################################################################################
-  redis:
-    image: redis:7
-    restart: always
+  mongodb:
+    image: mongo:6.0.13
+    volumes:
+      - ./docker/scripts/mongodb:/docker-entrypoint-initdb.d
     healthcheck:
-      test: [ "CMD", "redis-cli", "PING" ]
+      test: ["CMD", "mongosh", "--eval", "db.hello().ok"]
       interval: 5s
+      start_period: 5s
+      retries: 3
+
+  trade-imports-gmr-finder:
+    image: defradigital/trade-imports-gmr-finder:${TRADE_IMPORTS_GMR_FINDER:-latest}
+    env_file:
+      - ./docker/config/defaults.env
+      - ./docker/config/trade-imports-gmr-finder.env
+    environment:
+      - PORT=3000
+    depends_on:
+      localstack:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "http://localhost:3000/health"]
+      interval: 3s
       start_period: 2s
-      retries: 5
+      retries: 3
 
-
-################################################################################
-#
-# Add the services you want to test below.
-#
-################################################################################
-#  cdp-example-node-frontend:
-#    image: defradigital/cdp-example-node-frontend:${CDP_EXAMPLE_NODE_FRONTEND:-latest}
-#    env_file:
-#      - ./docker/config/defaults.env
-#      - ./docker/config/example-frontend.env
-#    environment:
-#      - PORT=3000
-#    depends_on:
-#      cdp-example-node-backend:
-#        condition: service_started
-#      redis:
-#        condition: service_healthy
-#    ports:
-#      - 3000:3000
-#    healthcheck:
-#      test: ["CMD", "curl", "http://localhost:3000/health"]
-#      interval: 3s
-#      start_period: 2s
-#      retries: 3
-
-################################################################################
-# cdp-example-node-backend:
-#   image: defradigital/cdp-example-node-backend:${CDP_EXAMPLE_NODE_BACKEND:-latest}
-#   env_file:
-#     - ./docker/config/defaults.env
-#     - ./docker/config/example-backend.env
-#   environment:
-#     - PORT=3001
-#   depends_on:
-#     mongodb:
-#       condition: service_healthy
-#   healthcheck:
-#     test: ["CMD", "curl", "http://localhost:3001/health"]
-#     interval: 3s
-#     start_period: 2s
-#     retries: 3
+  trade-imports-gmr-processor:
+    image: defradigital/trade-imports-gmr-processor:${TRADE_IMPORTS_GMR_PROCESSOR:-latest}
+    env_file:
+      - ./docker/config/defaults.env
+      - ./docker/config/trade-imports-gmr-processor.env
+    environment:
+      - PORT=3001
+    depends_on:
+      localstack:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "http://localhost:3001/health"]
+      interval: 3s
+      start_period: 2s
+      retries: 3
