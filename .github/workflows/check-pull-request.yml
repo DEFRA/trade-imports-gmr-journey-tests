@@ -12,7 +12,7 @@ on:
       - ready_for_review
 
 jobs:
-  cdp-workflows:
+  pr-validator:
     name: Run Pull Request Checks
     runs-on: ubuntu-latest
     steps:
@@ -26,3 +26,10 @@ jobs:
             10.0
       - run: dotnet tool restore
       - run: dotnet csharpier check .
+
+  sonarcloud-scan:
+    name: CDP SonarCloud Scan
+    uses: ./.github/workflows/sonarcloud.yml
+    needs: pr-validator
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
