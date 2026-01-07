@@ -49,7 +49,7 @@ Run the tests and generate a report as follows:
 ./scripts/runner.sh
 ```
 
-The HTML report is written to `test-report/`.
+The HTML report is written to `test-report/index.html`.
 
 ### Docker
 
