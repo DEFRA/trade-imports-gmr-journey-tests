@@ -1,6 +1,4 @@
-using Xunit;
-
-namespace TradeImportsGmr.JourneyTests;
+namespace TradeImportsGmr.JourneyTests.ETA;
 
 public class UpdatedTimeOfArrivalTest
 {

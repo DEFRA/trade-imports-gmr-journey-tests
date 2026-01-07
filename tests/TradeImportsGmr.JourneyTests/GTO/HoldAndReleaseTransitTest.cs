@@ -1,6 +1,4 @@
-using Xunit;
-
-namespace TradeImportsGmr.JourneyTests;
+namespace TradeImportsGmr.JourneyTests.GTO;
 
 public class HoldAndReleaseTransitTest
 {
