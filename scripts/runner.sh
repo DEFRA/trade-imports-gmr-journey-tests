@@ -5,7 +5,7 @@ root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 report_dir="$root_dir/test-report"
 results_dir="$report_dir/results"
 trx_file="$results_dir/test-results.trx"
-html_report="$report_dir/test-results.html"
+html_report="$report_dir/index.html"
 
 rm -rf "$report_dir"
 
