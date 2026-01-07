@@ -18,5 +18,5 @@ dotnet tool run trxlog2html -i "$trx_file" -o "$html_report"
 
 echo "Test report generated at $html_report"
 
-publish_script="$root_dir/bin/publish-tests.sh"
+publish_script="$root_dir/scripts/publish-tests.sh"
 "$publish_script"
