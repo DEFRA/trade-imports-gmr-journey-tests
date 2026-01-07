@@ -270,3 +270,4 @@ library.db
 
 .venv
 .env
+test-report/

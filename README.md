@@ -43,6 +43,14 @@ Run as follows:
 dotnet test
 ```
 
+Run the tests and generate a report as follows:
+
+```bash
+./scripts/runner.sh
+```
+
+The HTML report is written to `test-report/`.
+
 ### Docker
 
 Build as follows:
