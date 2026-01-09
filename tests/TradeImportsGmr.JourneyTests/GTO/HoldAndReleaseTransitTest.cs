@@ -1,11 +1,34 @@
+using AwesomeAssertions;
+using TradeImportsGmr.JourneyTests.Clients.GmrFinder;
+
 namespace TradeImportsGmr.JourneyTests.GTO;
 
 public class HoldAndReleaseTransitTest
 {
+    private readonly GmrFinderMessageClient _gmrFinderMessageClient = GmrFinderMessageClient.Create();
+
     [Fact]
-    public void TrueIsTrue()
+    public async Task ItCanSendAMessage()
     {
-        Assert.True(true);
+        var fixturePath = Path.Combine(
+            AppContext.BaseDirectory,
+            "..",
+            "..",
+            "..",
+            "..",
+            "TestFixtures",
+            "Fixtures",
+            "customs-declaration.json"
+        );
+        var requestBody = await File.ReadAllTextAsync(fixturePath, TestContext.Current.CancellationToken);
+
+        var result = await _gmrFinderMessageClient.SendDataEventAsync(
+            "CustomsDeclaration",
+            requestBody,
+            TestContext.Current.CancellationToken
+        );
+
+        result.IsSuccessStatusCode.Should().BeTrue();
     }
 }
 
