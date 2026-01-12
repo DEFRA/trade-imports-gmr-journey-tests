@@ -8,24 +8,15 @@ Journey tests to cover [trade-imports-gmr-finder](https://github.com/DEFRA/trade
 
 Install the following:
 - [.NET 10 (SDK)](https://dotnet.microsoft.com/)
-- [Docker](https://docs.docker.com/engine/)
-- [Docker Compose](https://docs.docker.com/compose/)
+- [Docker](https://docs.docker.com/engine/) (optional)
 
-### Services
+### Environment variables
 
 Create `.env` file in the root of the project and provide necessary secrets (copy `.env.example`).
 
-Start as follows:
+### Services
 
-```bash
-docker compose up -d
-```
-
-Stop as follows:
-
-```bash
-docker compose down
-```
+See [trade-imports-gmr-local-env](https://github.com/DEFRA/trade-imports-gmr-local-env) for instructions.
 
 ## Tests
 
