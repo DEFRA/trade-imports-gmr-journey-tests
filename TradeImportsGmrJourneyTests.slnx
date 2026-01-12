@@ -2,6 +2,7 @@
   <Folder Name="/tests/">
     <Project Path="tests/TradeImportsGmr.JourneyTests/TradeImportsGmr.JourneyTests.csproj" />
     <Project Path="tests/TestFixtures/TestFixtures.csproj" />
+    <Project Path="tests/TestHelpers/TestHelpers.csproj" />
   </Folder>
   <Folder Name="/Solution items/">
     <File Path="README.md" />
