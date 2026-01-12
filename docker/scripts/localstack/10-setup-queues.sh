@@ -11,11 +11,3 @@ aws --endpoint $LOCALSTACK_URL sqs create-queue --region $AWS_REGION --queue-nam
 aws --endpoint $LOCALSTACK_URL sqs create-queue --region $AWS_REGION --queue-name trade_imports_matched_gmrs_processor_gto
 aws --endpoint $LOCALSTACK_URL sqs create-queue --region $AWS_REGION --queue-name trade_imports_matched_gmrs_gmr_processor_eta
 aws --endpoint $LOCALSTACK_URL sqs create-queue --region $AWS_REGION --queue-name trade_imports_matched_gmrs_gmr_processor_match
-
-# list sns topics created
-echo "Created the following sns topics:"
-aws --endpoint $LOCALSTACK_URL sns --region $AWS_REGION list-topics
-
-# list sqs queues created
-echo "Created the following sqs queues:"
-aws --endpoint $LOCALSTACK_URL sqs --region $AWS_REGION list-queues

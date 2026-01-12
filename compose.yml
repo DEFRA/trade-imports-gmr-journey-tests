@@ -30,40 +30,33 @@ services:
     env_file:
       - ./docker/config/defaults.env
       - ./docker/config/trade-imports-gmr-finder.env
-    environment:
-      ENABLE_DEV_ENDPOINTS: true
-      DEV_ENDPOINT_USERNAME: test
-      DEV_ENDPOINT_PASSWORD: test
-      PORT: 3000
     depends_on:
       localstack:
         condition: service_healthy
       mongodb:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "http://localhost:3000/health"]
+      test: ["CMD", "curl", "http://localhost:8080/health"]
       interval: 3s
       start_period: 2s
       retries: 3
     ports:
-      - 3000:3000
+      - "3000:8080"
 
   trade-imports-gmr-processor:
     image: defradigital/trade-imports-gmr-processor:${TRADE_IMPORTS_GMR_PROCESSOR:-latest}
     env_file:
       - ./docker/config/defaults.env
       - ./docker/config/trade-imports-gmr-processor.env
-    environment:
-      - PORT=3001
     depends_on:
       localstack:
         condition: service_healthy
       mongodb:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "http://localhost:3001/health"]
+      test: ["CMD", "curl", "http://localhost:8080/health"]
       interval: 3s
       start_period: 2s
       retries: 3
     ports:
-      - 3001:3001
+      - "3001:8080"
