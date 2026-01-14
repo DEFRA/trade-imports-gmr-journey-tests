@@ -19,6 +19,7 @@
 **/docker
 **/docker-compose*
 **/Dockerfile*
+**/hurl
 **/node_modules
 **/npm-debug.log
 **/obj
