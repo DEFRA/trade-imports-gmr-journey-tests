@@ -1,10 +1,31 @@
+using System.Text.Json;
+using AutoFixture;
+using TradeImportsGmr.JourneyTests.Clients.GmrFinder;
+
 namespace TradeImportsGmr.JourneyTests.ETA;
 
 public class EstimatedTimeOfArrivalTests
 {
     [Fact]
-    public void TrueIsTrue()
+    public async Task TrueIsTrue()
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        var ipaffsNotification = TestFixtures.ImportPreNotificationFixtures.ImportPreNotificationFixture();
+        var ipaffsNotificationResourceEvent = TestFixtures
+            .ImportPreNotificationFixtures.ImportPreNotificationResourceEventFixture(ipaffsNotification.Create())
+            .Create();
+        var ipaffsNotificationBody = JsonSerializer.Serialize(
+            ipaffsNotificationResourceEvent,
+            new JsonSerializerOptions(JsonSerializerDefaults.Web)
+        );
+
+        var gmrFinder = GmrFinderMessageClient.Create();
+        await gmrFinder.SendDataEventAsync(
+            ResourceTypes.ImportPreNotification,
+            ipaffsNotificationBody,
+            cancellationToken
+        );
         Assert.True(true);
     }
 }
