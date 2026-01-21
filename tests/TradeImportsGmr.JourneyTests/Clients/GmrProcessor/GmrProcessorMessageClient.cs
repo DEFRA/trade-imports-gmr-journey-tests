@@ -40,7 +40,7 @@ public sealed class GmrProcessorMessageClient(HttpClient httpClient) : IDisposab
 
         return await httpClient.SendAsync(request, cancellationToken);
     }
-    
+
     public async Task<HttpResponseMessage> SendDataEventAsync(
         string resourceType,
         string body,
