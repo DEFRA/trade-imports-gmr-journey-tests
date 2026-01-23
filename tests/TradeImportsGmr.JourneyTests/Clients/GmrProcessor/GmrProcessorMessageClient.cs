@@ -41,6 +41,19 @@ public sealed class GmrProcessorMessageClient(HttpClient httpClient) : IDisposab
         return await httpClient.SendAsync(request, cancellationToken);
     }
 
+    public async Task<HttpResponseMessage> SendDataEventAsync(
+        string resourceType,
+        string body,
+        CancellationToken cancellationToken = default
+    )
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Post, "consumers/data-events-queue");
+        request.Content = new StringContent(body, Encoding.UTF8, "application/json");
+        request.Headers.Add("ResourceType", resourceType);
+
+        return await httpClient.SendAsync(request, cancellationToken);
+    }
+
     public void Dispose()
     {
         httpClient.Dispose();
