@@ -31,6 +31,31 @@ public static class ImportPreNotificationFixtures
             .With(x => x.ReferenceNumber, ChedGenerator.GenerateChed());
     }
 
+    public static IPostprocessComposer<ImportPreNotification> WithInspectionRequired(
+        this IPostprocessComposer<ImportPreNotification> notification,
+        bool inspectionRequired
+    )
+    {
+        var partTwo = GetFixture()
+            .Build<PartTwo>()
+            .With(x => x.InspectionRequired, inspectionRequired ? "Required" : "Not required")
+            .Create();
+
+        return notification.With(x => x.PartTwo, partTwo);
+    }
+
+    public static IPostprocessComposer<ImportPreNotification> WithNctsMrn(
+        this IPostprocessComposer<ImportPreNotification> notification,
+        string mrn
+    )
+    {
+        var partOne = GetFixture().Build<PartOne>().With(x => x.ProvideCtcMrn, "YES").Create();
+
+        return notification
+            .With(x => x.PartOne, partOne)
+            .With(x => x.ExternalReferences, [new ExternalReference { Reference = mrn, System = "NCTS" }]);
+    }
+
     private static Fixture GetFixture()
     {
         var fixture = new Fixture();

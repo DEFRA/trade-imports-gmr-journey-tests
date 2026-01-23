@@ -14,7 +14,7 @@ public class EstimatedTimeOfArrivalTests : JourneyTestBase
     [Fact]
     public async Task ItCanSendMatchedGmrEventsAndReceiveEtaMessage()
     {
-        var mrn = MrnGenerator.GenerateMrn(MrnGenerator.MrnStatus.Embarked);
+        var mrn = MrnGenerator.GenerateMrn();
         var chedReference = ChedGenerator.GenerateChed();
 
         var customsDeclaration = CustomsDeclarationFixtures
