@@ -9,6 +9,7 @@ namespace TradeImportsGmr.JourneyTests.Clients.GmrProcessor;
 public enum GmrProcessorMessageType
 {
     GvmsHoldRequest,
+    ImportMatchMessage,
     IpaffsUpdatedTimeOfArrivalMessage,
 }
 
