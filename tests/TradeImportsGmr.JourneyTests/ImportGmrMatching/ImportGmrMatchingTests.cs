@@ -55,7 +55,7 @@ public class ImportGmrMatchingTests : JourneyTestBase
                     GmrProcessorMessageType.ImportMatchMessage,
                     TestContext.Current.CancellationToken
                 );
-                messages.IsSuccessStatusCode.Should().BeTrue();
+                await AssertSuccessStatusCode(messages, "Getting ImportMatchMessage");
 
                 var parsed = await messages.Content.ReadFromJsonAsync<List<MessageAudit>>(
                     TestContext.Current.CancellationToken

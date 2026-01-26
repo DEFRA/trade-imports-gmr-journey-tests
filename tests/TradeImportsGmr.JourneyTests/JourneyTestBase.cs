@@ -13,6 +13,19 @@ public abstract class JourneyTestBase
     protected readonly GmrFinderMessageClient GmrFinderMessageClient = GmrFinderMessageClient.Create();
     protected readonly GmrProcessorMessageClient GmrProcessorMessageClient = GmrProcessorMessageClient.Create();
 
+    protected static async Task AssertSuccessStatusCode(HttpResponseMessage response, string context)
+    {
+        if (!response.IsSuccessStatusCode)
+        {
+            var responseBody = await response.Content.ReadAsStringAsync();
+            response
+                .IsSuccessStatusCode.Should()
+                .BeTrue(
+                    $"{context} failed with status code {response.StatusCode} ({(int)response.StatusCode}). Response body: {responseBody}"
+                );
+        }
+    }
+
     protected async Task SendCustomsDeclarationToBothServices(
         ResourceEvent<CustomsDeclaration> customsDeclarationEvent,
         CancellationToken cancellationToken
@@ -26,14 +39,14 @@ public abstract class JourneyTestBase
             body,
             cancellationToken
         );
-        finderResult.IsSuccessStatusCode.Should().BeTrue();
+        await AssertSuccessStatusCode(finderResult, "GmrFinder CustomsDeclaration");
 
         var processorResult = await GmrProcessorMessageClient.SendDataEventAsync(
             "CustomsDeclaration",
             body,
             cancellationToken
         );
-        processorResult.IsSuccessStatusCode.Should().BeTrue();
+        await AssertSuccessStatusCode(processorResult, "GmrProcessor CustomsDeclaration");
     }
 
     protected async Task SendImportPreNotificationToBothServices(
@@ -49,13 +62,13 @@ public abstract class JourneyTestBase
             body,
             cancellationToken
         );
-        finderResult.IsSuccessStatusCode.Should().BeTrue();
+        await AssertSuccessStatusCode(finderResult, "GmrFinder ImportPreNotification");
 
         var processorResult = await GmrProcessorMessageClient.SendDataEventAsync(
             "ImportPreNotification",
             body,
             cancellationToken
         );
-        processorResult.IsSuccessStatusCode.Should().BeTrue();
+        await AssertSuccessStatusCode(processorResult, "GmrProcessor ImportPreNotification");
     }
 }
