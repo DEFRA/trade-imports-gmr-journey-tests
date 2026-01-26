@@ -44,4 +44,6 @@ COPY --from=build /app/publish .
 COPY .config .config
 COPY scripts scripts
 
+RUN dotnet tool restore
+
 ENTRYPOINT [ "./scripts/runner.sh" ]
