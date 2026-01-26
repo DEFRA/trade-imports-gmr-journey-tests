@@ -9,7 +9,7 @@ html_report="$report_dir/index.html"
 
 rm -rf "$report_dir"
 
-dotnet test TradeImportsGmr.JourneyTests.dll --logger "trx;LogFileName=$(basename "$trx_file")" --results-directory "$results_dir" || true
+dotnet test TradeImportsGmr.JourneyTests.dll --logger "trx;LogFileName=$(basename "$trx_file")" --results-directory "$results_dir" || test_exit_code=$?
 
 dotnet tool run trxlog2html -i "$trx_file" -o "$html_report"
 
@@ -17,3 +17,5 @@ echo "Test report generated at $html_report"
 
 publish_script="$root_dir/scripts/publish-tests.sh"
 "$publish_script"
+
+exit "${test_exit_code:-0}"
