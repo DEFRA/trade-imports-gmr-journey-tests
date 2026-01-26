@@ -28,5 +28,6 @@ FROM base AS publish
 WORKDIR /app
 
 COPY --from=build /app .
+RUN dotnet tool restore
 
 ENTRYPOINT [ "./scripts/runner.sh" ]
