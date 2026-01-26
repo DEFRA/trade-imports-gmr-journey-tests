@@ -9,8 +9,6 @@ html_report="$report_dir/index.html"
 
 rm -rf "$report_dir"
 
-dotnet tool restore
-
 dotnet test --logger "trx;LogFileName=$(basename "$trx_file")" --results-directory "$results_dir"
 
 mkdir -p "$report_dir"
