@@ -132,7 +132,9 @@ public class EstimatedTimeOfArrivalTests : JourneyTestBase
             TestContext.Current.CancellationToken
         );
 
-        firstResult.Should().NotBeNull();
+        firstResult
+            .Should()
+            .NotBeNull($"Failed to find first ETA message with reference number {chedReference} and MRN {mrn}");
 
         var firstMessageBody = JsonSerializer.Deserialize<IpaffsUpdatedTimeOfArrivalMessage>(firstResult!.MessageBody);
         var firstTimestamp = firstMessageBody!.LocalDateTimeOfArrival;
@@ -162,11 +164,11 @@ public class EstimatedTimeOfArrivalTests : JourneyTestBase
             TestContext.Current.CancellationToken
         );
 
-        secondResult.Should().NotBeNull();
+        secondResult
+            .Should()
+            .NotBeNull($"Failed to find second ETA message with reference number {chedReference} and MRN {mrn}");
 
-        var secondMessageBody = JsonSerializer.Deserialize<IpaffsUpdatedTimeOfArrivalMessage>(
-            secondResult!.MessageBody
-        );
+        var secondMessageBody = JsonSerializer.Deserialize<IpaffsUpdatedTimeOfArrivalMessage>(secondResult.MessageBody);
         secondMessageBody!.ReferenceNumber.Should().Be(chedReference);
         secondMessageBody.Mrn.Should().Be(mrn);
         secondMessageBody.LocalDateTimeOfArrival.Should().NotBe(firstTimestamp);
