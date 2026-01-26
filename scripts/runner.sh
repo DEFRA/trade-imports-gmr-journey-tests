@@ -9,9 +9,8 @@ html_report="$report_dir/index.html"
 
 rm -rf "$report_dir"
 
-dotnet test --logger "trx;LogFileName=$(basename "$trx_file")" --results-directory "$results_dir"
+dotnet test TradeImportsGmr.JourneyTests.dll --logger "trx;LogFileName=$(basename "$trx_file")" --results-directory "$results_dir"
 
-mkdir -p "$report_dir"
 dotnet tool run trxlog2html -i "$trx_file" -o "$html_report"
 
 echo "Test report generated at $html_report"
