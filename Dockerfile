@@ -41,6 +41,7 @@ FROM base AS publish
 WORKDIR /app
 
 COPY --from=build /app/publish .
+COPY .config .config
 COPY scripts scripts
 
 ENTRYPOINT [ "./scripts/runner.sh" ]
