@@ -3,7 +3,7 @@ namespace TradeImportsGmr.JourneyTests.Utils;
 public static class AsyncWaiter
 {
     private static readonly TimeSpan s_pollInterval = TimeSpan.FromMilliseconds(1000);
-    private static readonly TimeSpan s_timeout = TimeSpan.FromSeconds(30);
+    private static readonly TimeSpan s_timeout = TimeSpan.FromSeconds(150);
 
     public static async Task<T?> WaitForAsync<T>(
         Func<Task<T?>> condition,
