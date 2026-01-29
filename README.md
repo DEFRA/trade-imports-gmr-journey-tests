@@ -1,6 +1,9 @@
 # trade-imports-gmr-journey-tests
 
-Journey tests to cover [trade-imports-gmr-finder](https://github.com/DEFRA/trade-imports-gmr-finder) and [trade-imports-gmr-processor](https://github.com/DEFRA/trade-imports-gmr-processor) services.
+Journey tests for Trade Imports GMR services.
+
+- [trade-imports-gmr-finder](https://github.com/DEFRA/trade-imports-gmr-finder)
+- [trade-imports-gmr-processor](https://github.com/DEFRA/trade-imports-gmr-processor)
 
 ## Prerequisites
 
