@@ -65,7 +65,10 @@ public class ImportGmrMatchingTests : JourneyTestBase
 
                 return parsed?.FirstOrDefault(p =>
                 {
-                    var messageBody = JsonSerializer.Deserialize<ImportMatchMessage>(p.MessageBody, s_defaultSerializerOptions);
+                    var messageBody = JsonSerializer.Deserialize<ImportMatchMessage>(
+                        p.MessageBody,
+                        s_defaultSerializerOptions
+                    );
                     return messageBody is { Match: true } && messageBody.ReferenceNumber == chedReference;
                 });
             },

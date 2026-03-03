@@ -63,7 +63,10 @@ public class EstimatedTimeOfArrivalTests : JourneyTestBase
 
                 return parsed?.FirstOrDefault(p =>
                 {
-                    var messageBody = JsonSerializer.Deserialize<IpaffsUpdatedTimeOfArrivalMessage>(p.MessageBody, s_defaultSerializerOptions);
+                    var messageBody = JsonSerializer.Deserialize<IpaffsUpdatedTimeOfArrivalMessage>(
+                        p.MessageBody,
+                        s_defaultSerializerOptions
+                    );
                     return messageBody != null
                         && messageBody.ReferenceNumber == chedReference
                         && messageBody.EntryReference == mrn;
@@ -125,7 +128,10 @@ public class EstimatedTimeOfArrivalTests : JourneyTestBase
 
                 return parsed?.FirstOrDefault(p =>
                 {
-                    var messageBody = JsonSerializer.Deserialize<IpaffsUpdatedTimeOfArrivalMessage>(p.MessageBody, s_defaultSerializerOptions);
+                    var messageBody = JsonSerializer.Deserialize<IpaffsUpdatedTimeOfArrivalMessage>(
+                        p.MessageBody,
+                        s_defaultSerializerOptions
+                    );
                     return messageBody != null
                         && messageBody.ReferenceNumber == chedReference
                         && messageBody.EntryReference == mrn;
@@ -138,7 +144,10 @@ public class EstimatedTimeOfArrivalTests : JourneyTestBase
             .Should()
             .NotBeNull($"Failed to find first ETA message with reference number {chedReference} and MRN {mrn}");
 
-        var firstMessageBody = JsonSerializer.Deserialize<IpaffsUpdatedTimeOfArrivalMessage>(firstResult!.MessageBody, s_defaultSerializerOptions);
+        var firstMessageBody = JsonSerializer.Deserialize<IpaffsUpdatedTimeOfArrivalMessage>(
+            firstResult!.MessageBody,
+            s_defaultSerializerOptions
+        );
         var firstTimestamp = firstMessageBody!.LocalDateTimeOfArrival;
 
         var secondResult = await AsyncWaiter.WaitForAsync(
@@ -156,7 +165,10 @@ public class EstimatedTimeOfArrivalTests : JourneyTestBase
 
                 return parsed?.FirstOrDefault(p =>
                 {
-                    var messageBody = JsonSerializer.Deserialize<IpaffsUpdatedTimeOfArrivalMessage>(p.MessageBody, s_defaultSerializerOptions);
+                    var messageBody = JsonSerializer.Deserialize<IpaffsUpdatedTimeOfArrivalMessage>(
+                        p.MessageBody,
+                        s_defaultSerializerOptions
+                    );
                     return messageBody != null
                         && messageBody.ReferenceNumber == chedReference
                         && messageBody.EntryReference == mrn
@@ -170,7 +182,10 @@ public class EstimatedTimeOfArrivalTests : JourneyTestBase
             .Should()
             .NotBeNull($"Failed to find second ETA message with reference number {chedReference} and MRN {mrn}");
 
-        var secondMessageBody = JsonSerializer.Deserialize<IpaffsUpdatedTimeOfArrivalMessage>(secondResult.MessageBody, s_defaultSerializerOptions);
+        var secondMessageBody = JsonSerializer.Deserialize<IpaffsUpdatedTimeOfArrivalMessage>(
+            secondResult.MessageBody,
+            s_defaultSerializerOptions
+        );
         secondMessageBody!.ReferenceNumber.Should().Be(chedReference);
         secondMessageBody.EntryReference.Should().Be(mrn);
         secondMessageBody.LocalDateTimeOfArrival.Should().NotBe(firstTimestamp);
