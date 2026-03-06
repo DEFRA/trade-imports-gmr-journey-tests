@@ -11,6 +11,8 @@ namespace TradeImportsGmr.JourneyTests.ImportGmrMatching;
 
 public class ImportGmrMatchingTests : JourneyTestBase
 {
+    private static readonly JsonSerializerOptions s_defaultSerializerOptions = new(JsonSerializerDefaults.Web);
+
     [Fact]
     public async Task GivenAnImportAndCustomsDeclarationMatches_ItShouldSendAnImportMatchMessage()
     {
@@ -63,8 +65,11 @@ public class ImportGmrMatchingTests : JourneyTestBase
 
                 return parsed?.FirstOrDefault(p =>
                 {
-                    var messageBody = JsonSerializer.Deserialize<ImportMatchMessage>(p.MessageBody);
-                    return messageBody is { Match: true } && messageBody.ImportReference == chedReference;
+                    var messageBody = JsonSerializer.Deserialize<ImportMatchMessage>(
+                        p.MessageBody,
+                        s_defaultSerializerOptions
+                    );
+                    return messageBody is { Match: true } && messageBody.ReferenceNumber == chedReference;
                 });
             },
             TestContext.Current.CancellationToken

@@ -11,6 +11,8 @@ namespace TradeImportsGmr.JourneyTests.ETA;
 
 public class EstimatedTimeOfArrivalTests : JourneyTestBase
 {
+    private static readonly JsonSerializerOptions s_defaultSerializerOptions = new(JsonSerializerDefaults.Web);
+
     [Fact]
     public async Task ItCanSendMatchedGmrEventsAndReceiveEtaMessage()
     {
@@ -61,10 +63,13 @@ public class EstimatedTimeOfArrivalTests : JourneyTestBase
 
                 return parsed?.FirstOrDefault(p =>
                 {
-                    var messageBody = JsonSerializer.Deserialize<IpaffsUpdatedTimeOfArrivalMessage>(p.MessageBody);
+                    var messageBody = JsonSerializer.Deserialize<IpaffsUpdatedTimeOfArrivalMessage>(
+                        p.MessageBody,
+                        s_defaultSerializerOptions
+                    );
                     return messageBody != null
                         && messageBody.ReferenceNumber == chedReference
-                        && messageBody.Mrn == mrn;
+                        && messageBody.EntryReference == mrn;
                 });
             },
             TestContext.Current.CancellationToken
@@ -123,10 +128,13 @@ public class EstimatedTimeOfArrivalTests : JourneyTestBase
 
                 return parsed?.FirstOrDefault(p =>
                 {
-                    var messageBody = JsonSerializer.Deserialize<IpaffsUpdatedTimeOfArrivalMessage>(p.MessageBody);
+                    var messageBody = JsonSerializer.Deserialize<IpaffsUpdatedTimeOfArrivalMessage>(
+                        p.MessageBody,
+                        s_defaultSerializerOptions
+                    );
                     return messageBody != null
                         && messageBody.ReferenceNumber == chedReference
-                        && messageBody.Mrn == mrn;
+                        && messageBody.EntryReference == mrn;
                 });
             },
             TestContext.Current.CancellationToken
@@ -136,7 +144,10 @@ public class EstimatedTimeOfArrivalTests : JourneyTestBase
             .Should()
             .NotBeNull($"Failed to find first ETA message with reference number {chedReference} and MRN {mrn}");
 
-        var firstMessageBody = JsonSerializer.Deserialize<IpaffsUpdatedTimeOfArrivalMessage>(firstResult!.MessageBody);
+        var firstMessageBody = JsonSerializer.Deserialize<IpaffsUpdatedTimeOfArrivalMessage>(
+            firstResult!.MessageBody,
+            s_defaultSerializerOptions
+        );
         var firstTimestamp = firstMessageBody!.LocalDateTimeOfArrival;
 
         var secondResult = await AsyncWaiter.WaitForAsync(
@@ -154,10 +165,13 @@ public class EstimatedTimeOfArrivalTests : JourneyTestBase
 
                 return parsed?.FirstOrDefault(p =>
                 {
-                    var messageBody = JsonSerializer.Deserialize<IpaffsUpdatedTimeOfArrivalMessage>(p.MessageBody);
+                    var messageBody = JsonSerializer.Deserialize<IpaffsUpdatedTimeOfArrivalMessage>(
+                        p.MessageBody,
+                        s_defaultSerializerOptions
+                    );
                     return messageBody != null
                         && messageBody.ReferenceNumber == chedReference
-                        && messageBody.Mrn == mrn
+                        && messageBody.EntryReference == mrn
                         && messageBody.LocalDateTimeOfArrival != firstTimestamp;
                 });
             },
@@ -168,9 +182,12 @@ public class EstimatedTimeOfArrivalTests : JourneyTestBase
             .Should()
             .NotBeNull($"Failed to find second ETA message with reference number {chedReference} and MRN {mrn}");
 
-        var secondMessageBody = JsonSerializer.Deserialize<IpaffsUpdatedTimeOfArrivalMessage>(secondResult.MessageBody);
+        var secondMessageBody = JsonSerializer.Deserialize<IpaffsUpdatedTimeOfArrivalMessage>(
+            secondResult.MessageBody,
+            s_defaultSerializerOptions
+        );
         secondMessageBody!.ReferenceNumber.Should().Be(chedReference);
-        secondMessageBody.Mrn.Should().Be(mrn);
+        secondMessageBody.EntryReference.Should().Be(mrn);
         secondMessageBody.LocalDateTimeOfArrival.Should().NotBe(firstTimestamp);
     }
 }
