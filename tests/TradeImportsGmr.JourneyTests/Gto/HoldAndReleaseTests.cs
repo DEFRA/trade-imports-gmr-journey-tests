@@ -14,8 +14,8 @@ public class HoldAndReleaseTransitTests : JourneyTestBase
     [Fact]
     public async Task GivenAnImportPreNotificationRequiringAnInspection_AHoldIsPlaced_AndThenReleased()
     {
-        var mrn = MrnGenerator.GenerateMrn();
-        var chedReference = ChedGenerator.GenerateChed();
+        var mrn = "24GB999986789AB017";
+        var chedReference = "CHEDA.GB.2026.9581874";
 
         var customsDeclaration = CustomsDeclarationFixtures
             .CustomsDeclarationFixture()

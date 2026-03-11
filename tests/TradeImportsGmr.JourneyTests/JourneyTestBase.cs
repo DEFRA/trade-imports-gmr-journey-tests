@@ -1,8 +1,6 @@
 using System.Text.Json;
 using AwesomeAssertions;
-using Defra.TradeImportsDataApi.Domain.CustomsDeclaration;
 using Defra.TradeImportsDataApi.Domain.Events;
-using Defra.TradeImportsDataApi.Domain.Ipaffs;
 using TradeImportsGmr.JourneyTests.Clients.GmrFinder;
 using TradeImportsGmr.JourneyTests.Clients.GmrProcessor;
 
@@ -27,7 +25,7 @@ public abstract class JourneyTestBase
     }
 
     protected async Task SendCustomsDeclarationToBothServices(
-        ResourceEvent<CustomsDeclaration> customsDeclarationEvent,
+        ResourceEvent<CustomsDeclarationEvent> customsDeclarationEvent,
         CancellationToken cancellationToken
     )
     {
@@ -50,7 +48,7 @@ public abstract class JourneyTestBase
     }
 
     protected async Task SendImportPreNotificationToBothServices(
-        ResourceEvent<ImportPreNotification> importPreNotificationEvent,
+        ResourceEvent<ImportPreNotificationEvent> importPreNotificationEvent,
         CancellationToken cancellationToken
     )
     {

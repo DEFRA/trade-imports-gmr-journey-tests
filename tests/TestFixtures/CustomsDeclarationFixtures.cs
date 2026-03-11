@@ -8,18 +8,18 @@ namespace TestFixtures;
 
 public static class CustomsDeclarationFixtures
 {
-    public static IPostprocessComposer<ResourceEvent<CustomsDeclaration>> CustomsDeclarationResourceEventFixture(
-        CustomsDeclaration customsDeclaration
+    public static IPostprocessComposer<ResourceEvent<CustomsDeclarationEvent>> CustomsDeclarationResourceEventFixture(
+        CustomsDeclarationEvent customsDeclarationEvent
     )
     {
         return GetFixture()
-            .Build<ResourceEvent<CustomsDeclaration>>()
+            .Build<ResourceEvent<CustomsDeclarationEvent>>()
             .With(x => x.ResourceId, MrnGenerator.GenerateMrn())
-            .With(x => x.Resource, customsDeclaration)
+            .With(x => x.Resource, customsDeclarationEvent)
             .With(x => x.ResourceType, ResourceEventResourceTypes.CustomsDeclaration);
     }
 
-    public static IPostprocessComposer<CustomsDeclaration> CustomsDeclarationFixture()
+    public static IPostprocessComposer<CustomsDeclarationEvent> CustomsDeclarationFixture()
     {
         var chedReferences = new List<string>
         {
@@ -28,7 +28,8 @@ public static class CustomsDeclarationFixtures
         };
 
         return GetFixture()
-            .Build<CustomsDeclaration>()
+            .Build<CustomsDeclarationEvent>()
+            .With(x => x.Id, MrnGenerator.GenerateMrn())
             .With(x => x.ClearanceRequest, ClearanceRequestFixture().Create())
             .With(x => x.ClearanceDecision, ClearanceDecisionFixture(chedReferences).Create());
     }
