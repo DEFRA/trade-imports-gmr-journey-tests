@@ -17,19 +17,6 @@ public class HoldAndReleaseTransitTests : JourneyTestBase
         var mrn = MrnGenerator.GenerateMrn();
         var chedReference = ChedGenerator.GenerateChed();
 
-        var customsDeclaration = CustomsDeclarationFixtures
-            .CustomsDeclarationFixture()
-            .With(
-                x => x.ClearanceDecision,
-                CustomsDeclarationFixtures.ClearanceDecisionFixture([chedReference]).Create()
-            )
-            .Create();
-
-        var customsDeclarationEvent = CustomsDeclarationFixtures
-            .CustomsDeclarationResourceEventFixture(customsDeclaration)
-            .With(x => x.ResourceId, mrn)
-            .Create();
-
         var importPreNotification = ImportPreNotificationFixtures
             .ImportPreNotificationFixture(mrn)
             .With(x => x.ReferenceNumber, chedReference)
@@ -40,8 +27,6 @@ public class HoldAndReleaseTransitTests : JourneyTestBase
         var importPreNotificationEvent = ImportPreNotificationFixtures
             .ImportPreNotificationResourceEventFixture(importPreNotification)
             .Create();
-
-        await SendCustomsDeclarationToBothServices(customsDeclarationEvent, TestContext.Current.CancellationToken);
 
         await SendImportPreNotificationToBothServices(
             importPreNotificationEvent,
@@ -111,5 +96,127 @@ public class HoldAndReleaseTransitTests : JourneyTestBase
         );
 
         resultReleased.Should().NotBeNull($"Failed to release hold on MRN {mrn} with CHED {chedReference}");
+    }
+
+    [Fact]
+    public async Task GivenMultipleImportPreNotificationsWithIdenticalMrnRequiringAnInspection_AHoldIsPlaced_AndThenReleased()
+    {
+        var mrn = MrnGenerator.GenerateMrn();
+        var chedReference1 = ChedGenerator.GenerateChed();
+        var chedReference2 = ChedGenerator.GenerateChed();
+
+        var importPreNotification1 = ImportPreNotificationFixtures
+            .ImportPreNotificationFixture(mrn)
+            .With(x => x.ReferenceNumber, chedReference1)
+            .WithNctsMrn(mrn)
+            .WithInspectionRequired(true)
+            .Create();
+
+        var importPreNotificationEvent1 = ImportPreNotificationFixtures
+            .ImportPreNotificationResourceEventFixture(importPreNotification1)
+            .Create();
+
+        var importPreNotification2 = ImportPreNotificationFixtures
+            .ImportPreNotificationFixture(mrn)
+            .With(x => x.ReferenceNumber, chedReference2)
+            .WithNctsMrn(mrn)
+            .WithInspectionRequired(true)
+            .Create();
+
+        var importPreNotificationEvent2 = ImportPreNotificationFixtures
+            .ImportPreNotificationResourceEventFixture(importPreNotification2)
+            .Create();
+
+        await SendImportPreNotificationToBothServices(
+            importPreNotificationEvent1,
+            TestContext.Current.CancellationToken
+        );
+
+        await SendImportPreNotificationToBothServices(
+            importPreNotificationEvent2,
+            TestContext.Current.CancellationToken
+        );
+
+        var result = await AsyncWaiter.WaitForAsync(
+            async () =>
+            {
+                var messages = await GmrProcessorMessageClient.GetMessageAsync(
+                    GmrProcessorMessageType.GvmsHoldRequest,
+                    TestContext.Current.CancellationToken
+                );
+                messages.IsSuccessStatusCode.Should().BeTrue();
+
+                var parsed = await messages.Content.ReadFromJsonAsync<List<MessageAudit>>(
+                    TestContext.Current.CancellationToken
+                );
+
+                return parsed?.FirstOrDefault(p =>
+                {
+                    var messageBody = JsonSerializer.Deserialize<GvmsHoldRecord>(p.MessageBody);
+                    return messageBody != null && messageBody.Mrns.Contains(mrn) && messageBody.Hold;
+                });
+            },
+            TestContext.Current.CancellationToken
+        );
+
+        result.Should().NotBeNull($"Failed to place hold on MRN {mrn} with CHED {chedReference1}");
+        result.Should().NotBeNull($"Failed to place hold on MRN {mrn} with CHED {chedReference2}");
+
+        var importPreNotificationReleased1 = ImportPreNotificationFixtures
+            .ImportPreNotificationFixture(mrn)
+            .With(x => x.ReferenceNumber, chedReference1)
+            .WithNctsMrn(mrn)
+            .WithInspectionRequired(false)
+            .Create();
+
+        var importPreNotificationEventReleased1 = ImportPreNotificationFixtures
+            .ImportPreNotificationResourceEventFixture(importPreNotificationReleased1)
+            .Create();
+
+        var importPreNotificationReleased2 = ImportPreNotificationFixtures
+            .ImportPreNotificationFixture(mrn)
+            .With(x => x.ReferenceNumber, chedReference2)
+            .WithNctsMrn(mrn)
+            .WithInspectionRequired(false)
+            .Create();
+
+        var importPreNotificationEventReleased2 = ImportPreNotificationFixtures
+            .ImportPreNotificationResourceEventFixture(importPreNotificationReleased2)
+            .Create();
+
+        await SendImportPreNotificationToBothServices(
+            importPreNotificationEventReleased1,
+            TestContext.Current.CancellationToken
+        );
+
+        await SendImportPreNotificationToBothServices(
+            importPreNotificationEventReleased2,
+            TestContext.Current.CancellationToken
+        );
+
+        var resultReleased = await AsyncWaiter.WaitForAsync(
+            async () =>
+            {
+                var messages = await GmrProcessorMessageClient.GetMessageAsync(
+                    GmrProcessorMessageType.GvmsHoldRequest,
+                    TestContext.Current.CancellationToken
+                );
+                messages.IsSuccessStatusCode.Should().BeTrue();
+
+                var parsed = await messages.Content.ReadFromJsonAsync<List<MessageAudit>>(
+                    TestContext.Current.CancellationToken
+                );
+
+                return parsed?.FirstOrDefault(p =>
+                {
+                    var messageBody = JsonSerializer.Deserialize<GvmsHoldRecord>(p.MessageBody);
+                    return messageBody != null && messageBody.Mrns.Contains(mrn) && !messageBody.Hold;
+                });
+            },
+            TestContext.Current.CancellationToken
+        );
+
+        resultReleased.Should().NotBeNull($"Failed to release hold on MRN {mrn} with CHED {chedReference1}");
+        resultReleased.Should().NotBeNull($"Failed to release hold on MRN {mrn} with CHED {chedReference2}");
     }
 }
