@@ -101,7 +101,7 @@ public class HoldAndReleaseTransitTests : JourneyTestBase
     [Fact]
     public async Task GivenMultipleImportPreNotificationsWithIdenticalMrnRequiringAnInspection_AHoldIsPlaced_AndThenReleased()
     {
-        var mrn = "26GB123456789AB017";
+        var mrn = MrnGenerator.GenerateMrn();
         var chedReference1 = ChedGenerator.GenerateChed();
         var chedReference2 = ChedGenerator.GenerateChed();
 
