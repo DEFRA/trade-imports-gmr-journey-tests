@@ -56,7 +56,11 @@ public static class ImportPreNotificationFixtures
         string mrn
     )
     {
-        var partOne = GetFixture().Build<PartOne>().With(x => x.ProvideCtcMrn, "YES").Create();
+        var partOne = GetFixture()
+            .Build<PartOne>()
+            .With(x => x.ProvideCtcMrn, "YES")
+            .With(x => x.PortOfExit, "GBFXT")
+            .Create();
 
         return notification
             .With(x => x.PartOne, partOne)
