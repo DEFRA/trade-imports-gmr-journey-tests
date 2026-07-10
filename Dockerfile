@@ -1,7 +1,5 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
 
-RUN apk add --no-cache aws-cli
-
 WORKDIR /app
 
 COPY . .
@@ -14,12 +12,20 @@ RUN --mount=type=secret,id=DEFRA_NUGET_PAT \
 
 RUN dotnet csharpier check .
 
+FROM build AS publish
+
 RUN dotnet publish tests/TradeImportsGmr.JourneyTests -c Release -o /app/publish
 
-FROM build AS publish
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS final
+
+RUN apk add --no-cache aws-cli
 
 WORKDIR /app
 
-COPY --from=build /app/publish .
+COPY --from=publish /app/publish .
+COPY .config .config
+COPY scripts scripts
+
+RUN dotnet tool restore
 
 ENTRYPOINT [ "./scripts/entrypoint.sh" ]
