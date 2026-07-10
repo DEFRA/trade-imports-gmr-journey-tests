@@ -37,14 +37,6 @@ Run as follows:
 dotnet test
 ```
 
-Run the tests and generate a report as follows:
-
-```bash
-./scripts/runner.sh
-```
-
-The HTML report is written to `test-report/index.html`.
-
 ### Docker
 
 Build as follows:
@@ -56,7 +48,15 @@ docker build . -t trade-imports-gmr-journey-tests --secret id=DEFRA_NUGET_PAT
 Run as follows:
 
 ```bash
-docker run -it --rm trade-imports-gmr-journey-tests
+docker run -it --rm --net=host \
+  -e S3_ENDPOINT='http://localhost:4566' \
+  -e RESULTS_OUTPUT_S3_PATH='s3://reports' \
+  -e AWS_ACCESS_KEY_ID='test' \
+  -e AWS_DEFAULT_REGION='eu-west-2' \
+  -e AWS_SECRET_ACCESS_KEY='test' \
+  -e AWS_SECRET_KEY='test' \
+  -e AWS_REGION='eu-west-2' \
+  trade-imports-gmr-journey-tests
 ```
 
 ## Linting and formatting
