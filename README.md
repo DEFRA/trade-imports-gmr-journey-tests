@@ -50,7 +50,7 @@ The HTML report is written to `test-report/index.html`.
 Build as follows:
 
 ```bash
-docker build . -t trade-imports-gmr-journey-tests
+docker build . -t trade-imports-gmr-journey-tests --secret id=DEFRA_NUGET_PAT
 ```
 
 Run as follows:

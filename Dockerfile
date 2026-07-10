@@ -14,9 +14,6 @@ FROM base AS build
 
 WORKDIR /app
 
-ARG DEFRA_NUGET_PAT
-ENV DEFRA_NUGET_PAT=${DEFRA_NUGET_PAT}
-
 COPY TradeImportsGmrJourneyTests.slnx TradeImportsGmrJourneyTests.slnx
 COPY .config/ .config/
 COPY .editorconfig .editorconfig
@@ -29,7 +26,11 @@ COPY tests/TestHelpers/TestHelpers.csproj tests/TestHelpers/TestHelpers.csproj
 COPY tests/TradeImportsGmr.JourneyTests/TradeImportsGmr.JourneyTests.csproj tests/TradeImportsGmr.JourneyTests/TradeImportsGmr.JourneyTests.csproj
 
 RUN dotnet tool restore
-RUN dotnet restore
+
+RUN --mount=type=secret,id=DEFRA_NUGET_PAT \
+  DEFRA_NUGET_PAT="$(cat /run/secrets/DEFRA_NUGET_PAT)" \
+  dotnet restore
+
 RUN dotnet csharpier check .
 
 COPY tests tests
