@@ -2,11 +2,7 @@
 
 echo "run_id: $RUN_ID"
 
-mkdir -p reports
-
-dotnet test TradeImportsGmr.JourneyTests.dll --logger "trx;LogFileName=test.trx" --results-directory "reports" || test_exit_code=$?
-
-dotnet tool run trxlog2html -i "reports/test.trx" -o "reports/index.html"
+dotnet test --test-modules TradeImportsGmr.JourneyTests.dll --results-directory reports --report-html --report-html-filename index.html || test_exit_code=$?
 
 . "./scripts/publish-tests.sh"
 publish_exit_code=$?
