@@ -50,7 +50,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DEFRA/trade-imports-gmr-local-env
-          ref: main
+          ref: 0.1.0
           path: trade-imports-gmr-local-env
 
       - name: Start trade-imports-gmr-local-env
