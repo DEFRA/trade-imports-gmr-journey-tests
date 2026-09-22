@@ -10,6 +10,7 @@ Journey tests for Trade Imports GMR services.
 ### Dependencies
 
 Install the following:
+
 - [.NET 10 (SDK)](https://dotnet.microsoft.com/)
 - [Docker](https://docs.docker.com/engine/) (optional)
 
@@ -34,8 +35,10 @@ dotnet build
 Run as follows:
 
 ```bash
-dotnet test
+dotnet test --results-directory reports --report-html --report-html-filename index.html
 ```
+
+The test report is available from the `reports` directory. See [path/to/project/reports/index.html](path/to/project/reports/index.html) in your browser.
 
 ### Docker
 
@@ -58,6 +61,8 @@ docker run -it --rm --net=host \
   -e AWS_REGION='eu-west-2' \
   trade-imports-gmr-journey-tests
 ```
+
+The test report is available from the `reports` S3 bucket. See [s3://reports](http://localhost:4566/reports/index.html) in your browser.
 
 ## Linting and formatting
 
